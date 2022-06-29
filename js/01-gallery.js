@@ -5,46 +5,38 @@ const listGallery = document.querySelector('.gallery');
 
 function createGallleryMarkup(galleryItems) {
     return galleryItems.map(({ preview, original, description }) => {
-        return `<div class="gallery__item">
-            <a class="gallery__link" href="${original}">
-                <img
-                class="gallery__image"
+        return `<img
                 src="${preview}"
-                data-source="${original}"
                 alt="${description}"
-                />
-            </a>
-        </div>`;
+                />`;
     }).join('');
 };
 
 listGallery.insertAdjacentHTML('beforeend', createGallleryMarkup(galleryItems));
 
-listGallery.addEventListener('click', onImgGalleryClick);
+const lightBox = document.createElement('div');
+lightBox.id = 'lightbox';
+document.body.appendChild(lightBox);
+ 
+const images = document.querySelectorAll('img');
+images.forEach((image) => {
+    image.addEventListener('click', e => {
+        lightBox.classList.add('active');
+        const img = document.createElement('img');
+        img.src = image.src;
+        while (lightBox.firstChild) {
+            lightBox.removeChild(lightBox.firstChild);
+        }
+        lightBox.appendChild(img);
+    })
+});
 
-function onImgGalleryClick(event) {
-    event.preventDefault();
-const imgElSelected = event.target.classList.contains('gallery__image');
+lightBox.addEventListener('click', revoveActiveClassLightbox);
 
-if (!imgElSelected) {
-    return;
-} 
-const url = event.target.dataset.source;
+function revoveActiveClassLightbox (e) {
 
-const instance = basicLightbox.create(`<img src="${url}">`);
-instance.show(() => window.addEventListener('keydown', onKeyPress));
-
-function onKeyPress(event) {
-    if (event.key === 'Escape') {
-        instance.close(() => window.removeEventListener('keydown', onKeyPress));
-        console.log(event.key);
-        return;
-    }
-    return;
-};
-
-};
-
+    lightBox.classList.remove('active');
+}
 
 
 
